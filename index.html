@@ -1,13 +1,24 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>foreign-words-training</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!-- public/index.html - только базовый HTML, мета-теги, фавиконка
+public/index.html выполняет несколько важных функций:
+1. Точка входа - это единственный HTML-файл, который загружает браузер -->
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <!-- 2. Мета-информация - содержит метатеги, заголовок, фавиконку и т.д. -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="./src/assets/favicon.ico" />
+  <title>Приложение для изучения иностранных слов</title>
+</head>
+
+<body>
+  <!-- 3. Контейнер для React - элемент <div id="root"></div> служит контейнером, куда React "монтирует" всё ваше приложение -->
+  <div id="root"></div>
+  <!-- 4. Загрузка скриптов - через него загружается скомпилированный React-бандл -->
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
