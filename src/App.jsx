@@ -4,15 +4,41 @@
 //import './App.css';
 //import './components/WordCard.css';
 
-import { useState } from 'react'
+import {useState, useEffect} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
 import CardSlider from './components/cardSlider';
 // import ExamCards from './components/examCards';
 import ResultsModal from './components/resultsModal';
+import { useFlipCard } from './hooks/useFlipCard';
 import './App.css';
 
-const cards = [
+
+
+const dictionary = {
+  apple: 'яблоко',
+  яблоко: 'apple',
+  hello: 'привет',
+  привет: 'hello',
+  hour: 'час',
+  час: 'hour',
+  end: 'конец',
+  конец: 'end',
+  light: 'свет',
+  свет: 'light'
+};
+
+function App() {
+  const [studyMode, setStudyMode] = useState(true); // true - режим изучения, false - экзамен
+  const [currentWord, setCurrentWord] = useState(1);
+  const [totalWords, setTotalWords] = useState(5);
+  const [correctPercent, setCorrectPercent] = useState(0);
+  const [time, setTime] = useState('00:00');
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  // Получаем состояние и функции из хука
+  const {isFlipped, showBack, flipCardOver, resetFlip} = useFlipCard();
+
+  const [cards, setCards] = useState([
   {
     frontEn: 'apple',
     backRus: 'яблоко',
@@ -38,59 +64,27 @@ const cards = [
     backRus: 'свет',
     example: 'В доме включен свет!',
   },
-];
+]);
 
-const dictionary = {
-  apple: 'яблоко',
-  яблоко: 'apple',
-  hello: 'привет',
-  привет: 'hello',
-  hour: 'час',
-  час: 'hour',
-  end: 'конец',
-  конец: 'end',
-  light: 'свет',
-  свет: 'light'
-};
-
-function App() {
-  const [studyMode] = useState(true); // true - режим изучения, false - экзамен
-  const [currentWord, setCurrentWord] = useState(1);
-  const [totalWords, setTotalWords] = useState(5);
-  const [progress, setProgress] = useState(0);
-  const [correctPercent, setCorrectPercent] = useState(0);
-  const [time, setTime] = useState('00:00');
-  const [card] = useState(cards[0]);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const progValue = 100 / cards.length;
+  const [progress, setProgress] = useState(progValue);
 
   const handleShuffleWords = () => {
     // Логика перемешивания слов
-    console.log('Перемешиваем слова...');
-    setCurrentWord(1);
-    setProgress(0);
+     resetFlip();
+
+    setTimeout(() => {
+      shuffle(cards);
+      setCurrentCardIndex(0);
+      setCards([...cards]);
+      setProgress(prev => prev = progValue);
+    }, 50)
   };
 
-  const flipCardOver = () => {
-    //логика для переворота карточки с английского на русский
-    console.log('карточка нажата для перевода');
-  }
-
-    const next = () => {
-    //логика для слайдера = следующая карточка
-    console.log('карточка нажата для перевода вперед');
-  }
-
-    const back = () => {
-    //логика для слайдера = предыдущая карточка
-    console.log('карточка нажата для перевода назад');
-  }
-
-    const exam = () => {
-    //логика для слайдера = перейти к экзамену
-    console.log('экзамен');
-  }
-
+  const shuffle = (arr) => {
+    arr.sort(() => Math.random() - 0.5);
+}
+   
   return (
     <div className="container">
       <header>
@@ -118,13 +112,12 @@ function App() {
         {/* Здесь будет основной контент - карточки слов */}
         <div className="content">
           <CardSlider 
-            card={card}
-            flipCardOver={flipCardOver}
-            next={next}
-            back={back}
-            exam={exam}
-            currentCardIndex={currentCardIndex}
             cards={cards}
+            currentCardIndex={currentCardIndex}
+            //самый простой способ передать состояние в другой компонент - это пропсы
+            setCurrentCardIndex={setCurrentCardIndex}
+            isFlipped={isFlipped}
+            flipCardOver={flipCardOver}
           />
           {/* <ExamCards /> */}
         </div>
