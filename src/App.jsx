@@ -8,9 +8,10 @@ import {useState, useEffect} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
 import CardSlider from './components/cardSlider';
-// import ExamCards from './components/examCards';
+import ExamCards from './components/examCards';
 import ResultsModal from './components/resultsModal';
 import { useFlipCard } from './hooks/useFlipCard';
+import {useTimer} from "./hooks/useTimer";
 import './App.css';
 
 
@@ -33,10 +34,11 @@ function App() {
   const [currentWord, setCurrentWord] = useState(1);
   const [totalWords, setTotalWords] = useState(5);
   const [correctPercent, setCorrectPercent] = useState(0);
-  const [time, setTime] = useState('00:00');
+
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   // Получаем состояние и функции из хука
-  const {isFlipped, showBack, flipCardOver, resetFlip} = useFlipCard();
+  const {isFlipped, flipCardOver, resetFlip} = useFlipCard();
+  const {time, setTime, setIsTimerRunning }=useTimer(true);
 
   const [cards, setCards] = useState([
   {
@@ -75,6 +77,7 @@ function App() {
 
     setTimeout(() => {
       shuffle(cards);
+      //индекс массива
       setCurrentCardIndex(0);
       setCards([...cards]);
       setProgress(prev => prev = progValue);
@@ -103,27 +106,42 @@ function App() {
           ) : (
             <ExamMode 
               correctPercent={correctPercent}
-              progress={progress}
+              progress={0}
               time={time}
+              setTime={setTime}
+              setInterval={setInterval}
             />
           )}
         </div>
         
         {/* Здесь будет основной контент - карточки слов */}
         <div className="content">
-          <CardSlider 
+          {studyMode ? (
+            <CardSlider 
             cards={cards}
             currentCardIndex={currentCardIndex}
+            setCurrentWord={setCurrentWord}
             //самый простой способ передать состояние в другой компонент - это пропсы
             setCurrentCardIndex={setCurrentCardIndex}
             isFlipped={isFlipped}
             flipCardOver={flipCardOver}
+            setStudyMode={setStudyMode}
+            setIsTimerRunning={setIsTimerRunning}
+            progValue={progValue}
+            setProgress={setProgress}
           />
-          {/* <ExamCards /> */}
+          ) : (
+          <ExamCards 
+            cards={cards}
+            progress={progress}
+            
+          />
+          )}
         </div>
         <div className="motivation">Давай, ты сможешь!</div>
       </main>
-      <ResultsModal />
+      <ResultsModal 
+      />
     </div>
   );
 }

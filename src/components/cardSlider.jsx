@@ -1,10 +1,11 @@
-function CardSlider({cards, currentCardIndex, setCurrentCardIndex, isFlipped, flipCardOver}) {
+function CardSlider({cards, setCurrentWord, currentCardIndex, setCurrentCardIndex, progValue, setProgress, isFlipped, flipCardOver, setStudyMode, setIsTimerRunning }) {
     const card=cards[currentCardIndex];
 
     const next = () => {
         if (currentCardIndex < cards.length - 1) {
             setCurrentCardIndex(prev => prev + 1);
             setProgress(prev => prev + progValue);
+            setCurrentWord(prev => prev + 1);
         }
     }
 
@@ -12,12 +13,16 @@ function CardSlider({cards, currentCardIndex, setCurrentCardIndex, isFlipped, fl
         if (currentCardIndex > 0) {
             setCurrentCardIndex(prev => prev - 1);
             setProgress(prev => prev - progValue);
+            setCurrentWord(prev => prev - 1);
         }
     }
 
     const exam = () => {
     //логика для слайдера = перейти к экзамену
     setStudyMode(false);
+    setCurrentCardIndex(0);      
+    // 3. Запускаем таймер экзамена
+    setIsTimerRunning(true)
     }
 
     return (
