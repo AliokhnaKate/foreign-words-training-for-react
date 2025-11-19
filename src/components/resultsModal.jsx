@@ -1,6 +1,7 @@
 import React from 'react';
 
-const ResultsModal = ({ isOpen, time, wordAttempts, onClose }) => {
+const ResultsModal = ({ isOpen, time, wordAttempts, onClose,  }) => {
+
   if (!isOpen) return null;
 
   return (

@@ -4,7 +4,7 @@
 //import './App.css';
 //import './components/WordCard.css';
 
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
 import CardSlider from './components/cardSlider';
@@ -13,21 +13,6 @@ import ResultsModal from './components/resultsModal';
 import { useFlipCard } from './hooks/useFlipCard';
 import {useTimer} from "./hooks/useTimer";
 import './App.css';
-
-
-
-const dictionary = {
-  apple: 'яблоко',
-  яблоко: 'apple',
-  hello: 'привет',
-  привет: 'hello',
-  hour: 'час',
-  час: 'hour',
-  end: 'конец',
-  конец: 'end',
-  light: 'свет',
-  свет: 'light'
-};
 
 function App() {
   const [studyMode, setStudyMode] = useState(true); // true - режим изучения, false - экзамен
@@ -80,7 +65,7 @@ function App() {
       //индекс массива
       setCurrentCardIndex(0);
       setCards([...cards]);
-      setProgress(prev => prev = progValue);
+      setProgress();
     }, 50)
   };
 
@@ -106,7 +91,7 @@ function App() {
           ) : (
             <ExamMode 
               correctPercent={correctPercent}
-              progress={0}
+              progress={progress}
               time={time}
               setTime={setTime}
               setInterval={setInterval}
@@ -133,8 +118,12 @@ function App() {
           ) : (
           <ExamCards 
             cards={cards}
+            setCards={setCards}
             progress={progress}
-            
+            setProgress={setProgress}
+            progValue={progValue}
+            correctPercent={correctPercent}
+            setCorrectPercent={setCorrectPercent}
           />
           )}
         </div>
@@ -145,6 +134,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App
