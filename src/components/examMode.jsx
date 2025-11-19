@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-function ExamMode({ correctPercent, progress, time }) {
+function ExamMode({ correctPercent, progress, time}) {
   return (
     <div id="exam-mode">
       <h3>Правильно отвечено <span id="correct-percent">{correctPercent}%</span></h3>

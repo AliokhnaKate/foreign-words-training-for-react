@@ -4,39 +4,26 @@
 //import './App.css';
 //import './components/WordCard.css';
 
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
 import CardSlider from './components/cardSlider';
-// import ExamCards from './components/examCards';
+import ExamCards from './components/examCards';
 import ResultsModal from './components/resultsModal';
 import { useFlipCard } from './hooks/useFlipCard';
+import {useTimer} from "./hooks/useTimer";
 import './App.css';
-
-
-
-const dictionary = {
-  apple: 'яблоко',
-  яблоко: 'apple',
-  hello: 'привет',
-  привет: 'hello',
-  hour: 'час',
-  час: 'hour',
-  end: 'конец',
-  конец: 'end',
-  light: 'свет',
-  свет: 'light'
-};
 
 function App() {
   const [studyMode, setStudyMode] = useState(true); // true - режим изучения, false - экзамен
   const [currentWord, setCurrentWord] = useState(1);
   const [totalWords, setTotalWords] = useState(5);
   const [correctPercent, setCorrectPercent] = useState(0);
-  const [time, setTime] = useState('00:00');
+
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   // Получаем состояние и функции из хука
-  const {isFlipped, showBack, flipCardOver, resetFlip} = useFlipCard();
+  const {isFlipped, flipCardOver, resetFlip} = useFlipCard();
+  const {time, setTime, setIsTimerRunning }=useTimer(true);
 
   const [cards, setCards] = useState([
   {
@@ -75,9 +62,10 @@ function App() {
 
     setTimeout(() => {
       shuffle(cards);
+      //индекс массива
       setCurrentCardIndex(0);
       setCards([...cards]);
-      setProgress(prev => prev = progValue);
+      setProgress();
     }, 50)
   };
 
@@ -105,28 +93,46 @@ function App() {
               correctPercent={correctPercent}
               progress={progress}
               time={time}
+              setTime={setTime}
+              setInterval={setInterval}
             />
           )}
         </div>
         
         {/* Здесь будет основной контент - карточки слов */}
         <div className="content">
-          <CardSlider 
+          {studyMode ? (
+            <CardSlider 
             cards={cards}
             currentCardIndex={currentCardIndex}
+            setCurrentWord={setCurrentWord}
             //самый простой способ передать состояние в другой компонент - это пропсы
             setCurrentCardIndex={setCurrentCardIndex}
             isFlipped={isFlipped}
             flipCardOver={flipCardOver}
+            setStudyMode={setStudyMode}
+            setIsTimerRunning={setIsTimerRunning}
+            progValue={progValue}
+            setProgress={setProgress}
           />
-          {/* <ExamCards /> */}
+          ) : (
+          <ExamCards 
+            cards={cards}
+            setCards={setCards}
+            progress={progress}
+            setProgress={setProgress}
+            progValue={progValue}
+            correctPercent={correctPercent}
+            setCorrectPercent={setCorrectPercent}
+          />
+          )}
         </div>
         <div className="motivation">Давай, ты сможешь!</div>
       </main>
-      <ResultsModal />
+      <ResultsModal 
+      />
     </div>
   );
 }
-
 
 export default App
