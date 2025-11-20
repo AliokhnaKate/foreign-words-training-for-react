@@ -1,23 +1,14 @@
 import {useState, useEffect} from 'react';
 
 export const useTimer=()=> {
-    //состояние для отображения текущего времени таймера в формате "минуты:секунды".
     let [time, setTime]=useState('00:00');
-    //отвечает за управление состоянием работы таймера.
-    //isTimerRunning - текущее состояние (true/false)
     const [isTimerRunning, setIsTimerRunning]=useState(false);
 
-    //useEffect отвечает за всю логику выполнения и синхронизацию таймера с жизненным циклом компонента.
-    //связывает: состояние isRunning(должен ли таймер работать) и Side effect setInterval(физический таймер в браузере)
-    // ДО: два независимых состояния isRunning: true/false setInterval: работает/не работает
-    // ПОСЛЕ: useEffect синхронизирует их isRunning=true  → setInterval ЗАПУЩЕН isRunning=false → setInterval ОСТАНОВЛЕН
     useEffect(() => {
         let interval = null;
 
         if (isTimerRunning) {
-            // ШАГ 3: Запускаем интервал (выполняется каждую секунду)
             interval=setInterval(() => {
-                //обновляем время
                 setTime(time => {
                     const newTime=time.split(':');
                     let minutes=+newTime[0];
@@ -45,8 +36,7 @@ export const useTimer=()=> {
             }, 1000)
         }
         return () => {
-            //без очистки: Создается новый интервал при каждом рендере (рендер 1 → интервал 1, рендер 2 → интервалы 1+2, и т.д.)
-            clearInterval(interval); // Останавливаем таймер
+            clearInterval(interval);
         };
     })
 
