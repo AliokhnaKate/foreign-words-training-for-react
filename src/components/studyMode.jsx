@@ -1,5 +1,3 @@
-import React from 'react';
-
 function StudyMode({ currentWord, totalWords, progress, onShuffleWords }) {
   return (
     <div id="study-mode">

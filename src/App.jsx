@@ -4,7 +4,7 @@
 //import './App.css';
 //import './components/WordCard.css';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
 import CardSlider from './components/cardSlider';
@@ -12,6 +12,7 @@ import ExamCards from './components/examCards';
 import ResultsModal from './components/resultsModal';
 import { useFlipCard } from './hooks/useFlipCard';
 import {useTimer} from "./hooks/useTimer";
+import { IsOpenResults } from './hooks/isOpenResults';
 import './App.css';
 
 function App() {
@@ -24,6 +25,8 @@ function App() {
   // Получаем состояние и функции из хука
   const {isFlipped, flipCardOver, resetFlip} = useFlipCard();
   const {time, setTime, setIsTimerRunning }=useTimer(true);
+  const {isOpenResults, openResults} = IsOpenResults();
+  const [wordAttempts, setwordAttempts] = useState([]);
 
   const [cards, setCards] = useState([
   {
@@ -65,13 +68,17 @@ function App() {
       //индекс массива
       setCurrentCardIndex(0);
       setCards([...cards]);
-      setProgress();
+      setProgress(progValue);
     }, 50)
   };
 
   const shuffle = (arr) => {
     arr.sort(() => Math.random() - 0.5);
 }
+
+    useEffect(() => {
+    setwordAttempts(wordAttempts);
+  }, [])
    
   return (
     <div className="container">
@@ -124,13 +131,25 @@ function App() {
             progValue={progValue}
             correctPercent={correctPercent}
             setCorrectPercent={setCorrectPercent}
+            setIsTimerRunning={setIsTimerRunning}
+            time={time}
+            wordAttempts={wordAttempts}
+            setwordAttempts={setwordAttempts}
+            isOpenResults={isOpenResults}
+            openResults={openResults}
           />
           )}
         </div>
         <div className="motivation">Давай, ты сможешь!</div>
       </main>
-      <ResultsModal 
-      />
+      {isOpenResults && (
+        <ResultsModal 
+          isOpenResults={isOpenResults}
+          time={time}
+          wordAttempts={wordAttempts}
+          setwordAttempts={setwordAttempts}
+        />
+      )}
     </div>
   );
 }
