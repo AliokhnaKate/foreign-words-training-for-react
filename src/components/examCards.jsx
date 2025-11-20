@@ -1,18 +1,20 @@
 import {useState, useEffect, useMemo} from 'react';
 
-const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, setCorrectPercent}) => {
+const ExamCards = ({cards, progValue, setProgress, setCorrectPercent, setwordAttempts, openResults, setIsTimerRunning}) => {
     //нужно состояние для того, чтобы карточки перемешивались 1 раз и useEffect и в useEffect сбрасывать и другие состояния
     //массив карточек
 
     const shuffledCards = useMemo(() => {
-        setProgress(0);
         // Используйте map, когда нужно преобразовать каждый элемент в один новый элемент
         // Используйте flatMap, когда нужно преобразовать каждый элемент в массив элементов и объединить их
+        // этот код выполняется только когда зависимости меняются
         return cards.flatMap(card => [card.frontEn, card.backRus])
             .sort(() => Math.random() - 0.5)
-    }, [])
+        //useMemo кэширует результат на основе зависимостей, ❌ если cards не в зависимостях, те [] - будет использоваться начальное значение
+    }, [cards])
 
     useEffect(() => {
+        setProgress(0);
         setSelectedCard(null);
         setMatchedCards([]);
         setWrongPairs([]);
@@ -23,6 +25,7 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
     //выбранная карта
     //Здесь хранится слово выбранной карточки, текущее значение будет null
     const [selectedCard, setSelectedCard] = useState(null);
+    
     // Добавляем состояние для проверенной пары
     //совпадающие карты
     const [matchedCards, setMatchedCards] = useState([]);
@@ -31,7 +34,6 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
     //карточки для исчезновения
     const [fadingOutCards, setFadingOutCards] = useState([]);
     
-
     const dictionary = {
       apple: 'яблоко',
       яблоко: 'apple',
@@ -46,6 +48,15 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
     };
 
     const onCardClick = (event) => {
+        //добавляет все выбранные слова
+        //при этой записи wordAttempts.push(event) и setwordAttempts(wordAttempts), wordAttempts меняется при каждом клике - это массив,
+        //который мутирует и openResults может создавать новый объект при каждом рендере. Лучше использовать состояние setwordAttempts(prev => [...prev, event])
+
+        // wordAttempts.push(event)
+        // setwordAttempts(wordAttempts);
+
+        setwordAttempts(prev => [...prev, event]);
+
         if (selectedCard==null) {
         //Устанавливает эту карточку со словом как выбранную карточку
             setSelectedCard(event);
@@ -62,10 +73,9 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
         if (findCard) {
             setMatchedCards([card1, card2]);
             setFadingOutCards([card1, card2]);
-            progress = progValue;
-            setProgress(prev=>prev+progress);
-            correctPercent=progValue;
-            setCorrectPercent(prev=>prev+correctPercent)
+            // progress = progValue; // ❌ Нельзя напрямую изменять пропсы
+            setProgress(prev=>prev+progValue);
+            setCorrectPercent(prev=>prev+progValue)
             // localStorage.setItem('myProgress', progress);
                 setTimeout(() => {
                     //Если shuffledCards должен изменяться и нужно рендерить другой массив, то нужно убрать useState и вычислять перемешанные карточки напрямую или использовать другие подходы: useMemo, если cards меняется нечасто, или useEffect, если нужно полностью сбрасывать игру при изменении cards
@@ -95,15 +105,27 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
 
         if (fadingOutCards.includes(cardText)) {
             className+=' fade-out';
-            className+=' hidden';
         }
 
         return className;
     }
 
+    const [hasOpenedResults, setHasOpenedResults] = useState(false);
+
+    useEffect(() => {
+        // const getResults=()=> {
+        //если вызов функции, которая изменяет состояние, как openResults, происходит в теле компонента, а не в useEffect или обработчике события, то будет ошибка.
+            if (shuffledCardsAfter.length===0 && !hasOpenedResults) {
+                setIsTimerRunning(false);
+                openResults(true);
+                setHasOpenedResults(true); //для предотвращения повторных вызовов
+            }
+        // }
+    }, [shuffledCardsAfter.length, openResults, setIsTimerRunning, hasOpenedResults]);
+
   return (
     <div id="exam-cards">
-        {shuffledCardsAfter.length>0 ? (
+        {shuffledCardsAfter.length>0 && (
             shuffledCardsAfter.map((cardText) => {
                 return (
                     <div
@@ -117,10 +139,6 @@ const ExamCards = ({cards, progValue, progress, setProgress, correctPercent, set
                     </div>
                 );
             })
-        ) : (
-            <div className="results-modal">
-                <ResultsModal />
-            </div>
         )}
     </div>
   );

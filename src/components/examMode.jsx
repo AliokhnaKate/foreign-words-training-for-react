@@ -1,7 +1,5 @@
 // src/components/ - отдельные компоненты (карточки, кнопки, формы)
 
-import React from 'react';
-
 function ExamMode({ correctPercent, progress, time}) {
   return (
     <div id="exam-mode">
