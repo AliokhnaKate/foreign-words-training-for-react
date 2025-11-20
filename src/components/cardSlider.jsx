@@ -18,10 +18,8 @@ function CardSlider({cards, setCurrentWord, currentCardIndex, setCurrentCardInde
     }
 
     const exam = () => {
-    //логика для слайдера = перейти к экзамену
     setStudyMode(false);
     setCurrentCardIndex(0);      
-    // 3. Запускаем таймер экзамена
     setIsTimerRunning(true)
     }
 
