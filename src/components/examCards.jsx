@@ -93,7 +93,7 @@ const ExamCards = ({cards, progValue, setProgress, setCorrectPercent, setwordAtt
                 openResults(true);
                 setHasOpenedResults(true);
             }
-        // }
+
     }, [shuffledCardsAfter.length, openResults, setIsTimerRunning, hasOpenedResults]);
 
   return (
