@@ -1,9 +1,3 @@
-// src/App.jsx - корневой компонент со всей структурой приложения
-
-// Вместо <link rel="stylesheet" href="style.css"> в HTML, в React импортируйте CSS прямо в JSX-файлы:
-//import './App.css';
-//import './components/WordCard.css';
-
 import {useState, useEffect} from 'react';
 import ExamMode from './components/examMode';
 import StudyMode from './components/studyMode';
@@ -16,13 +10,12 @@ import { IsOpenResults } from './hooks/isOpenResults';
 import './App.css';
 
 function App() {
-  const [studyMode, setStudyMode] = useState(true); // true - режим изучения, false - экзамен
+  const [studyMode, setStudyMode] = useState(true);
   const [currentWord, setCurrentWord] = useState(1);
-  const [totalWords, setTotalWords] = useState(5);
+  const [totalWords] = useState(5);
   const [correctPercent, setCorrectPercent] = useState(0);
 
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  // Получаем состояние и функции из хука
   const {isFlipped, flipCardOver, resetFlip} = useFlipCard();
   const {time, setTime, setIsTimerRunning }=useTimer(true);
   const {isOpenResults, openResults} = IsOpenResults();
@@ -60,12 +53,10 @@ function App() {
   const [progress, setProgress] = useState(progValue);
 
   const handleShuffleWords = () => {
-    // Логика перемешивания слов
      resetFlip();
 
     setTimeout(() => {
       shuffle(cards);
-      //индекс массива
       setCurrentCardIndex(0);
       setCards([...cards]);
       setProgress(progValue);
@@ -88,7 +79,6 @@ function App() {
       <main>
         <div className="sidebar">
           {studyMode ? (
-            // React компоненты должны начинаться с заглавной буквы (PascalCase) и должны быть импортированы из components.
             <StudyMode 
               currentWord={currentWord}
               totalWords={totalWords}
@@ -106,14 +96,12 @@ function App() {
           )}
         </div>
         
-        {/* Здесь будет основной контент - карточки слов */}
         <div className="content">
           {studyMode ? (
             <CardSlider 
             cards={cards}
             currentCardIndex={currentCardIndex}
             setCurrentWord={setCurrentWord}
-            //самый простой способ передать состояние в другой компонент - это пропсы
             setCurrentCardIndex={setCurrentCardIndex}
             isFlipped={isFlipped}
             flipCardOver={flipCardOver}

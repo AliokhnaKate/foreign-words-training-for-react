@@ -1,5 +1,3 @@
-// src/components/ - отдельные компоненты (карточки, кнопки, формы)
-
 function ExamMode({ correctPercent, progress, time}) {
   return (
     <div id="exam-mode">
