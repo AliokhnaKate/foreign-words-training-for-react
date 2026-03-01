@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/foreign-words-training-for-react/',
   plugins: [react()],
+  base: '/foreign-words-training-for-react/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  }
 })
